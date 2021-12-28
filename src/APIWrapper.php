@@ -35,8 +35,8 @@ class APIWrapper {
         return APIResponse::from_json(curl_exec($this->http));
     }
 
-
     function patch(string $endpoint, $body) {
+        curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "PATCH");
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
         curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->as_header(), APIWrapper::CONTENT_TYPE_HEADER]);
@@ -45,8 +45,41 @@ class APIWrapper {
         return APIResponse::from_json(curl_exec($this->http));
     }
 
+
+    function post(string $endpoint, $body) {
+        curl_setopt($this->http, CURLOPT_HTTPGET, true);
+        curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
+        curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->as_header(), APIWrapper::CONTENT_TYPE_HEADER]);
+        curl_setopt($this->http, CURLOPT_POSTFIELDS, json_encode($body));
+
+        return APIResponse::from_json(curl_exec($this->http));
+    }
+
+
+    function delete(string $endpoint) {
+        curl_setopt($this->http, CURLOPT_HTTPGET, true);
+        curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
+        curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->as_header()));
+
+        return APIResponse::from_json(curl_exec($this->http));
+    }
+
     public function health() {
         return $this->get("health");
+    }
+
+    public function ping() {
+        $start = microtime(true);
+        $res = $this->health();
+        $end = microtime(true);
+
+        if ($res->getData()) {
+            return new APIResponse("success", ($end - $start) * 1000, null);
+        } else {
+            return $res;
+        }
     }
 
     public function alerts() {

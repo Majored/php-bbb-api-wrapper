@@ -23,6 +23,14 @@ class APIResponse {
 
     public static function from_json($json) {
         $data = json_decode($json, true);
+
+        if (!array_key_exists("data", $data)) {
+            $data["data"] = NULL;
+        }
+        if (!array_key_exists("error", $data)) {
+            $data["error"] = NULL;
+        }
+
         return new APIResponse($data["result"], $data["data"], $data["error"]);
     }
 }

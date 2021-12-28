@@ -12,23 +12,36 @@ require __DIR__ . "/helpers/ThreadsHelper.php";
 
 class APIWrapper {
     const BASE_URL = "https://api.mc-market.org/v1";
+    const CONTENT_TYPE_HEADER = "Content-Type: application/json";
     const PER_PAGE = 20;
 
     private $http;
+    private $token;
     
     public function initialise(APIToken $token) {
+        $this->token = $token;
         $this->http = curl_init();
         
-        curl_setopt($this->http, CURLOPT_HTTPHEADER, array($token->as_header()));
         curl_setopt($this->http, CURLOPT_RETURNTRANSFER, true);
         
         return $this->health();
     }
 
     function get(string $endpoint) {
-        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
+        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
+        curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->as_header()));
         
+        return APIResponse::from_json(curl_exec($this->http));
+    }
+
+
+    function patch(string $endpoint, $body) {
+        curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "PATCH");
+        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
+        curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->as_header(), APIWrapper::CONTENT_TYPE_HEADER]);
+        curl_setopt($this->http, CURLOPT_POSTFIELDS, json_encode($body));
+
         return APIResponse::from_json(curl_exec($this->http));
     }
 

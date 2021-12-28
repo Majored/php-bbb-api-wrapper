@@ -12,4 +12,8 @@ class AlertsHelper {
     public function list() {
         return $this->wrapper->get("alerts");
     }
+
+    public function mark_as_read() {
+        return $this->wrapper->patch("alerts", ["read" => true]);
+    }
 }

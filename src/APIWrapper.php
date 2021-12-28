@@ -5,6 +5,11 @@
 require __DIR__ . "/APIToken.php";
 require __DIR__ . "/APIResponse.php";
 
+require __DIR__ . "/helpers/AlertsHelper.php";
+require __DIR__ . "/helpers/ConversationsHelper.php";
+require __DIR__ . "/helpers/MembersHelper.php";
+require __DIR__ . "/helpers/ThreadsHelper.php";
+
 class APIWrapper {
     const BASE_URL = "https://api.mc-market.org/v1";
     const PER_PAGE = 20;
@@ -29,5 +34,25 @@ class APIWrapper {
 
     public function health() {
         return $this->get("health");
+    }
+
+    public function alerts() {
+        return new AlertsHelper($this);
+    }
+
+    public function conversations() {
+        return new ConversationsHelper($this);
+    }
+
+    public function members() {
+        return new MembersHelper($this);
+    }
+
+    public function threads() {
+        return new ThreadsHelper($this);
+    }
+
+    public function resources() {
+        return new ResourcesHelper($this);
     }
 }

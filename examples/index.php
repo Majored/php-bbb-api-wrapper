@@ -1,0 +1,14 @@
+<?php
+// Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
+// MIT License (https://github.com/Majored/php-mcm-api-wrapper/blob/main/LICENSE)
+
+require("src/APIWrapper.php");
+
+$token = new APIToken(TokenType::PRIVATE, "...");
+$wrapper = new APIWrapper();
+
+if ($error = $wrapper->initialise($token)->getError()) {
+    die("API initialisation error: ". $error["message"]);
+}
+
+// A valid wrapper.

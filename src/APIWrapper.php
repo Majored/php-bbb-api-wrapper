@@ -4,6 +4,7 @@
 
 require __DIR__ . "/APIToken.php";
 require __DIR__ . "/APIResponse.php";
+require __DIR__ . "/Throttler.php";
 
 require __DIR__ . "/helpers/AlertsHelper.php";
 require __DIR__ . "/helpers/ConversationsHelper.php";
@@ -18,25 +19,45 @@ class APIWrapper {
 
     private $http;
     private $token;
-    
+    private $throttler;
+
     public function initialise(APIToken $token) {
         $this->token = $token;
         $this->http = curl_init();
+        $this->throttler = new Throttler();
         
         curl_setopt($this->http, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->http, CURLOPT_HEADER, 1);
         
         return $this->health();
     }
 
     function get(string $endpoint) {
+        while ($stall_for = $this->throttler->stall_for(RequestType::READ)) {
+            usleep($stall_for * 1000);
+        }
+
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
         curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->as_header()));
-        
-        return APIResponse::from_json(curl_exec($this->http));
+        $status = curl_getinfo($this->http, CURLINFO_HTTP_CODE);
+        list($header, $body) = explode("\r\n\r\n", curl_exec($this->http), 2);
+        $header = $this->parse_headers(explode("\r\n", $header));
+
+        if ($status === 429) {
+            $this->throttler->setRead(intval($header["Retry-After"]));
+            return $this->get($endpoint);
+        }
+
+        $this->throttler->resetRead();
+        return APIResponse::from_json($body);
     }
 
     function patch(string $endpoint, $body) {
+        while ($stall_for = $this->throttler->stall_for(RequestType::WRITE)) {
+            usleep($stall_for * 1000);
+        }
+
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "PATCH");
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
@@ -48,6 +69,10 @@ class APIWrapper {
 
 
     function post(string $endpoint, $body) {
+        while ($stall_for = $this->throttler->stall_for(RequestType::WRITE)) {
+            usleep($stall_for * 1000);
+        }
+
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
@@ -59,12 +84,29 @@ class APIWrapper {
 
 
     function delete(string $endpoint) {
+        while ($stall_for = $this->throttler->stall_for(RequestType::WRITE)) {
+            usleep($stall_for * 1000);
+        }
+        
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
         curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->as_header()));
 
         return APIResponse::from_json(curl_exec($this->http));
+    }
+
+    function parse_headers($headers) {
+        $new = [];
+
+        foreach ($headers as $header) {
+            $split = explode(":", $header, 2);
+            if (count($split) == 2) {
+                $new[$split[0]] = $split[1];
+            }
+        }
+
+        return $new;
     }
 
     public function health() {

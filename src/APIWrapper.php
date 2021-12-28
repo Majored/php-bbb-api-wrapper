@@ -2,8 +2,8 @@
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
 // MIT License (https://github.com/Majored/php-mcm-api-wrapper/blob/main/LICENSE)
 
-require("APIToken.php");
-require("APIResponse.php");
+require __DIR__ . "/APIToken.php";
+require __DIR__ . "/APIResponse.php";
 
 class APIWrapper {
     const BASE_URL = "https://api.mc-market.org/v1";

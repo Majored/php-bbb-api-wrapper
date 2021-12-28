@@ -13,7 +13,15 @@ class ThreadsHelper {
         return $this->wrapper->get("threads");
     }
 
+    public function fetch(int $thread_id) {
+        return $this->wrapper->get("threads/" . $thread_id);
+    }
+
     public function list_replies(int $thread_id) {
         return $this->wrapper->get("threads/" . $thread_id . "/replies");
+    }
+
+    public function reply(int $thread_id, string $message) {
+        return $this->wrapper->post("threads/" . $thread_id . "/replies", ["message" => $message]);
     }
 }

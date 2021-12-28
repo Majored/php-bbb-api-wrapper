@@ -9,6 +9,7 @@ require __DIR__ . "/helpers/AlertsHelper.php";
 require __DIR__ . "/helpers/ConversationsHelper.php";
 require __DIR__ . "/helpers/MembersHelper.php";
 require __DIR__ . "/helpers/ThreadsHelper.php";
+require __DIR__ . "/helpers/ResourcesHelper.php";
 
 class APIWrapper {
     const BASE_URL = "https://api.mc-market.org/v1";

@@ -21,6 +21,11 @@ class MembersHelper {
         return $this->wrapper->get("members/username/" . $username);
     }
 
+    public function modify_self(string $custom_title, string $about_me, string $signature) {
+        $body = ["custom_tile" => $custom_title, "about_me" => $about_me, "signature" => $signature];
+        return $this->wrapper->patch("members/self", $body);
+    }
+
     public function list_recent_bans() {
         return $this->wrapper->get("members/bans");
     }
@@ -31,5 +36,13 @@ class MembersHelper {
 
     public function fetch_profile_post(int $profile_post_id) {
         return $this->wrapper->get("members/self/profile-posts/" . $profile_post_id);
+    }
+
+    public function modify_profile_post(int $profile_post_id, string $message) {
+        return $this->wrapper->patch("members/self/profile-posts/" . $profile_post_id, ["message" => $message]);
+    }
+
+    public function delete_profile_post(int $profile_post_id) {
+        return $this->wrapper->delete("members/self/profile-posts/" . $profile_post_id);
     }
 }

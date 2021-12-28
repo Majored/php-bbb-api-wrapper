@@ -33,30 +33,21 @@ class APIWrapper {
     }
 
     function get(string $endpoint) {
-        while ($stall_for = $this->throttler->stall_for(RequestType::READ)) {
-            usleep($stall_for * 1000);
-        }
+        $this->stallUntilCanMakeRequest(RequestType::READ);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
         curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->as_header()));
-        $status = curl_getinfo($this->http, CURLINFO_HTTP_CODE);
-        list($header, $body) = explode("\r\n\r\n", curl_exec($this->http), 2);
-        $header = $this->parse_headers(explode("\r\n", $header));
 
-        if ($status === 429) {
-            $this->throttler->setRead(intval($header["Retry-After"]));
+        if ($body = $this->handleResponse(RequestType::READ)) {
+            return APIResponse::from_json($body);
+        } else {
             return $this->get($endpoint);
         }
-
-        $this->throttler->resetRead();
-        return APIResponse::from_json($body);
     }
 
     function patch(string $endpoint, $body) {
-        while ($stall_for = $this->throttler->stall_for(RequestType::WRITE)) {
-            usleep($stall_for * 1000);
-        }
+        $this->stallUntilCanMakeRequest(RequestType::WRITE);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "PATCH");
@@ -64,14 +55,16 @@ class APIWrapper {
         curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->as_header(), APIWrapper::CONTENT_TYPE_HEADER]);
         curl_setopt($this->http, CURLOPT_POSTFIELDS, json_encode($body));
 
-        return APIResponse::from_json(curl_exec($this->http));
+        if ($body = $this->handleResponse(RequestType::WRITE)) {
+            return APIResponse::from_json($body);
+        } else {
+            return $this->patch($endpoint, $body);
+        }
     }
 
 
     function post(string $endpoint, $body) {
-        while ($stall_for = $this->throttler->stall_for(RequestType::WRITE)) {
-            usleep($stall_for * 1000);
-        }
+        $this->stallUntilCanMakeRequest(RequestType::WRITE);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "POST");
@@ -79,24 +72,52 @@ class APIWrapper {
         curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->as_header(), APIWrapper::CONTENT_TYPE_HEADER]);
         curl_setopt($this->http, CURLOPT_POSTFIELDS, json_encode($body));
 
-        return APIResponse::from_json(curl_exec($this->http));
+        if ($body = $this->handleResponse(RequestType::WRITE)) {
+            return APIResponse::from_json($body);
+        } else {
+            return $this->post($endpoint, $body);
+        }
     }
 
 
     function delete(string $endpoint) {
-        while ($stall_for = $this->throttler->stall_for(RequestType::WRITE)) {
-            usleep($stall_for * 1000);
-        }
+        $this->stallUntilCanMakeRequest(RequestType::WRITE);
         
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
         curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->as_header()));
 
-        return APIResponse::from_json(curl_exec($this->http));
+        if ($body = $this->handleResponse(RequestType::WRITE)) {
+            return APIResponse::from_json($body);
+        } else {
+            return $this->delete($endpoint);
+        }
     }
 
-    function parse_headers($headers) {
+    private function handleResponse(int $type) {
+        list($header, $body) = explode("\r\n\r\n", curl_exec($this->http), 2);
+        $status = curl_getinfo($this->http, CURLINFO_HTTP_CODE);
+        $header = APIWrapper::parse_headers(explode("\r\n", $header));
+
+        if ($status === 429 && $type = RequestType::READ) {
+            $this->throttler->setRead(intval($header["Retry-After"]));
+            return null;
+        } else if ($status === 429 && $type = RequestType::WRITE) {
+            $this->throttler->setWrite(intval($header["Retry-After"]));
+            return null;
+        }
+
+        if ($type = RequestType::READ) {
+            $this->throttler->resetRead();
+        } else if ($type = RequestType::WRITE) {
+            $this->throttler->resetWrite();
+        }
+
+        return $body;
+    }
+
+    private static function parse_headers($headers) {
         $new = [];
 
         foreach ($headers as $header) {
@@ -109,11 +130,17 @@ class APIWrapper {
         return $new;
     }
 
-    public function health() {
+    private function stallUntilCanMakeRequest(int $type) {
+        while ($stall_for = $this->throttler->stall_for($type)) {
+            usleep($stall_for * 1000);
+        }
+    }
+
+    function health() {
         return $this->get("health");
     }
 
-    public function ping() {
+    function ping() {
         $start = microtime(true);
         $res = $this->health();
         $end = microtime(true);
@@ -125,23 +152,23 @@ class APIWrapper {
         }
     }
 
-    public function alerts() {
+    function alerts() {
         return new AlertsHelper($this);
     }
 
-    public function conversations() {
+    function conversations() {
         return new ConversationsHelper($this);
     }
 
-    public function members() {
+    function members() {
         return new MembersHelper($this);
     }
 
-    public function threads() {
+    function threads() {
         return new ThreadsHelper($this);
     }
 
-    public function resources() {
+    function resources() {
         return new ResourcesHelper($this);
     }
 }

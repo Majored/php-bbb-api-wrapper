@@ -66,7 +66,7 @@ class APIWrapper {
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
-        curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->as_header()));
+        curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->asHeader()));
 
         if ($body = $this->handleResponse(RequestType::READ)) {
             return APIResponse::from_json($body);

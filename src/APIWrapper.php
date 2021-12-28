@@ -12,16 +12,39 @@ require __DIR__ . "/helpers/MembersHelper.php";
 require __DIR__ . "/helpers/ThreadsHelper.php";
 require __DIR__ . "/helpers/ResourcesHelper.php";
 
+/** The primary class for interactions with MC-Market's API. */
 class APIWrapper {
+    /** @var string The base URL of MC-Market's API that we prepend to endpoints. */
     const BASE_URL = "https://api.mc-market.org/v1";
+
+    /** @var string The complete header line for request bodies (JSON).  */
     const CONTENT_TYPE_HEADER = "Content-Type: application/json";
+
+    /** @var string The the number of entities returned per page for paginated endpoints. */
     const PER_PAGE = 20;
 
+
+    /** @var CurlHandle The current CURL instance being used within this wrapper. */
     private $http;
-    private $token;
+
+    /** @var Throttler The current throttler instance being used within this wrapper. */
     private $throttler;
 
-    public function initialise(APIToken $token) {
+    /** @var APIToken The pre-constructed API token passed to this wrapper during initilisation. */
+    private $token;
+
+
+    /**
+	 * Initialises this wrapper with a provided API token.
+     * 
+     * During the initialisation process, we make a request to the `health` endpoint which we expect to always succeed
+     * under nominal conditions. If the request does fail, we expect subsequent requests to other endpoints to also
+     * fail so we conclude that an initialisation failure has occured.
+	 *
+	 * @param APIToken The pre-constructed API token.
+	 * @return APIResponse The parsed response of the request to `health`.
+	 */
+    function initialise(APIToken $token): APIResponse {
         $this->token = $token;
         $this->http = curl_init();
         $this->throttler = new Throttler();
@@ -32,7 +55,13 @@ class APIWrapper {
         return $this->health();
     }
 
-    function get(string $endpoint) {
+    /**
+	 * Schedules a GET request to a specific endpoint and stalls if we've previously hit a rate limit.
+	 *
+	 * @param string The path of the endpoint.
+	 * @return APIResponse The parsed response.
+	 */
+    private function get(string $endpoint): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::READ);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
@@ -46,7 +75,14 @@ class APIWrapper {
         }
     }
 
-    function patch(string $endpoint, $body) {
+    /**
+	 * Schedules a PATCH request to a specific endpoint and stalls if we've previously hit a rate limit.
+	 *
+	 * @param string The path of the endpoint.
+     * @param mixed The body of the request which will be serialised into JSON.
+	 * @return APIResponse The parsed response.
+	 */
+    private function patch(string $endpoint, mixed $body): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::WRITE);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
@@ -62,8 +98,14 @@ class APIWrapper {
         }
     }
 
-
-    function post(string $endpoint, $body) {
+    /**
+	 * Schedules a POST request to a specific endpoint and stalls if we've previously hit a rate limit.
+	 *
+	 * @param string The path of the endpoint.
+     * @param mixed The body of the request which will be serialised into JSON.
+	 * @return APIResponse The parsed response.
+	 */
+    private function post(string $endpoint, mixed $body): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::WRITE);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
@@ -79,8 +121,13 @@ class APIWrapper {
         }
     }
 
-
-    function delete(string $endpoint) {
+    /**
+	 * Schedules a DELETE request to a specific endpoint and stalls if we've previously hit a rate limit.
+	 *
+	 * @param string The path of the endpoint.
+	 * @return APIResponse The parsed response.
+	 */
+    private function delete(string $endpoint): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::WRITE);
         
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
@@ -95,10 +142,16 @@ class APIWrapper {
         }
     }
 
-    private function handleResponse(int $type) {
+    /** 
+     * Handles a CURL response and sets/resets local rate limiting metadata.
+	 *
+     * @param int The type of request which the response originated from (RequestType).
+	 * @return string The raw JSON response or null if a rate limit was hit.
+	 */
+    private function handleResponse(int $type): string {
         list($header, $body) = explode("\r\n\r\n", curl_exec($this->http), 2);
         $status = curl_getinfo($this->http, CURLINFO_HTTP_CODE);
-        $header = APIWrapper::parse_headers(explode("\r\n", $header));
+        $header = APIWrapper::parseHeaders(explode("\r\n", $header));
 
         if ($status === 429 && $type = RequestType::READ) {
             $this->throttler->setRead(intval($header["Retry-After"]));
@@ -117,7 +170,13 @@ class APIWrapper {
         return $body;
     }
 
-    private static function parse_headers($headers) {
+    /** 
+     * Converts raw header lines into an associated array of key/value pairs.
+	 *
+     * @param array An array of raw header lines.
+	 * @return string An associated array of header key/value pairs.
+	 */
+    private static function parseHeaders(array $headers): array {
         $new = [];
 
         foreach ($headers as $header) {
@@ -130,17 +189,36 @@ class APIWrapper {
         return $new;
     }
 
+    /** 
+     * Sleep until we no longer need to stall a request.
+	 *
+     * @param int The type of request which the response originated from (RequestType).
+	 */
     private function stallUntilCanMakeRequest(int $type) {
         while ($stall_for = $this->throttler->stall_for($type)) {
             usleep($stall_for * 1000);
         }
     }
 
-    function health() {
+    /** 
+     * Schedule an empty request which we expect to always succeed under nominal conditions.
+	 *
+     * @return APIResponse The parsed response.
+	 */
+    function health(): APIResponse {
         return $this->get("health");
     }
 
-    function ping() {
+    /** 
+     * Schedule an empty request and measure how long the API took to respond.
+     * 
+     * This duration may not be representative of the raw request latency due to the fact that requests may be stalled
+     * locally within this wrapper to ensure compliance with rate limiting rules. Whilst this is a trade-off, it can
+     * be argued that the returned duration will be more representative of the true latencies experienced.
+	 *
+     * @return APIResponse The parsed response with the data field overriden by the response time in milliseconds.
+	 */
+    function ping(): APIResponse {
         $start = microtime(true);
         $res = $this->health();
         $end = microtime(true);
@@ -152,23 +230,48 @@ class APIWrapper {
         }
     }
 
-    function alerts() {
+    /** 
+     * Construct and return an alerts helper instance.
+	 *
+     * @return AlertsHelper The constructed alerts helper.
+	 */
+    function alerts(): AlertsHelper {
         return new AlertsHelper($this);
     }
 
-    function conversations() {
+    /** 
+     * Construct and return a conversations helper instance.
+	 *
+     * @return ConversationsHelper The constructed conversations helper.
+	 */
+    function conversations(): ConversationsHelper {
         return new ConversationsHelper($this);
     }
 
-    function members() {
+    /** 
+     * Construct and return a members helper instance.
+	 *
+     * @return MembersHelper The constructed members helper.
+	 */
+    function members(): MembersHelper {
         return new MembersHelper($this);
     }
 
-    function threads() {
+    /** 
+     * Construct and return a threads helper instance.
+	 *
+     * @return ThreadsHelper The constructed threads helper.
+	 */
+    function threads(): ThreadsHelper {
         return new ThreadsHelper($this);
     }
 
-    function resources() {
+    /** 
+     * Construct and return a resources helper instance.
+	 *
+     * @return ResourcesHelper The constructed resources helper.
+	 */
+    function resources(): ResourcesHelper {
         return new ResourcesHelper($this);
     }
 }

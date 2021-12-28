@@ -153,10 +153,10 @@ class APIWrapper {
         $status = curl_getinfo($this->http, CURLINFO_HTTP_CODE);
         $header = APIWrapper::parseHeaders(explode("\r\n", $header));
 
-        if ($status === 429 && $type = RequestType::READ) {
+        if ($status === 429 && $type === RequestType::READ) {
             $this->throttler->setRead(intval($header["Retry-After"]));
             return null;
-        } else if ($status === 429 && $type = RequestType::WRITE) {
+        } else if ($status === 429 && $type === RequestType::WRITE) {
             $this->throttler->setWrite(intval($header["Retry-After"]));
             return null;
         }
@@ -181,7 +181,7 @@ class APIWrapper {
 
         foreach ($headers as $header) {
             $split = explode(":", $header, 2);
-            if (count($split) == 2) {
+            if (count($split) === 2) {
                 $new[$split[0]] = $split[1];
             }
         }
@@ -195,7 +195,7 @@ class APIWrapper {
      * @param int The type of request which the response originated from (RequestType).
 	 */
     private function stallUntilCanMakeRequest(int $type) {
-        while ($stall_for = $this->throttler->stall_for($type)) {
+        while ($stall_for = $this->throttler->stallFor($type)) {
             usleep($stall_for * 1000);
         }
     }

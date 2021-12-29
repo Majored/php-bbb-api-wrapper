@@ -10,10 +10,13 @@ require __DIR__ . "/helpers/AlertsHelper.php";
 require __DIR__ . "/helpers/ConversationsHelper.php";
 require __DIR__ . "/helpers/MembersHelper.php";
 require __DIR__ . "/helpers/ThreadsHelper.php";
+
 require __DIR__ . "/helpers/Resources/ResourcesHelper.php";
 require __DIR__ . "/helpers/Resources/LicensesHelper.php";
 require __DIR__ . "/helpers/Resources/PurchasesHelper.php";
 require __DIR__ . "/helpers/Resources/DownloadsHelper.php";
+require __DIR__ . "/helpers/Resources/VersionsHelper.php";
+require __DIR__ . "/helpers/Resources/UpdatesHelper.php";
 
 /** The primary class for interactions with MC-Market's API. */
 class APIWrapper {

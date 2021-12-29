@@ -79,4 +79,22 @@ class ResourcesHelper {
     function downloads(): DownloadsHelper {
         return new DownloadsHelper($this->wrapper);
     }
+
+    /** 
+     * Construct and return a versions helper instance.
+	 *
+     * @return VersionsHelper The constructed versions helper.
+	 */
+    function versions(): VersionsHelper {
+        return new VersionsHelper($this->wrapper);
+    }
+
+    /** 
+     * Construct and return a updates helper instance.
+	 *
+     * @return UpdatesHelper The constructed updates helper.
+	 */
+    function updates(): UpdatesHelper {
+        return new UpdatesHelper($this->wrapper);
+    }
 }

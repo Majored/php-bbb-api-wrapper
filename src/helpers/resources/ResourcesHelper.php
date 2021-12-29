@@ -61,4 +61,13 @@ class ResourcesHelper {
     function licenses(): LicensesHelper {
         return new LicensesHelper($this->wrapper);
     }
+
+    /** 
+     * Construct and return a purchases helper instance.
+	 *
+     * @return PurchasesHelper The constructed purchases helper.
+	 */
+    function purchases(): PurchasesHelper {
+        return new PurchasesHelper($this->wrapper);
+    }
 }

@@ -2,47 +2,110 @@
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
 // MIT License (https://github.com/Majored/php-mcm-api-wrapper/blob/main/LICENSE)
 
+/** A helper class for member-related API endpoints. */
 class MembersHelper {
+    /** @var APIWrapper The current wrapper instance in use. */
     private $wrapper;
 
+    /**
+	 * Construct a new members helper from a wrapper instance.
+	 *
+	 * @param APIWrapper The current wrapper instance in use.
+	 */
     function __construct(APIWrapper $wrapper) {
         $this->wrapper = $wrapper;
     }
 
-    public function fetch(int $member_id) {
+    /**
+	 * Fetch a member by their identifier.
+	 *
+     * @param int The identifier of the member.
+	 * @return APIResponse The parsed API response.
+	 */
+    function fetch(int $member_id): APIResponse {
         return $this->wrapper->get("members/" . $member_id);
     }
 
-    public function fetch_self() {
-        return $this->wrapper->get("members/self");
-    }
-
-    public function fetch_by_name(string $username) {
+    /**
+	 * Fetch a member by their username.
+	 *
+     * @param string The username of the member.
+	 * @return APIResponse The parsed API response.
+	 */
+    function fetchByName(string $username): APIResponse {
         return $this->wrapper->get("members/username/" . $username);
     }
 
-    public function modify_self(string $custom_title, string $about_me, string $signature) {
+    /**
+	 * Fetch information about yourself.
+	 *
+	 * @return APIResponse The parsed API response.
+	 */
+    function fetchSelf(): APIResponse {
+        return $this->wrapper->get("members/self");
+    }
+
+    /**
+	 * Modify information about yourself.
+	 *
+     * @param string The text content of a new custom title, or null if unchanged.
+     * @param string The text content of a new about me, or null if unchanged.
+     * @param string The text content of a signature, or null if unchanged.
+     * 
+	 * @return APIResponse The parsed API response.
+	 */
+    function modifySelf(string $custom_title, string $about_me, string $signature): APIResponse {
         $body = ["custom_tile" => $custom_title, "about_me" => $about_me, "signature" => $signature];
         return $this->wrapper->patch("members/self", $body);
     }
 
-    public function list_recent_bans() {
+    /**
+	 * List recent member bans.
+	 *
+	 * @return APIResponse The parsed API response.
+	 */
+    function listRecentBans(): APIResponse {
         return $this->wrapper->get("members/bans");
     }
 
-    public function list_profile_posts() {
+    /**
+	 * List a single page of profile posts on your own profile.
+	 *
+	 * @return APIResponse The parsed API response.
+	 */
+    function listProfilePosts(): APIResponse {
         return $this->wrapper->get("members/self/profile-posts");
     }
 
-    public function fetch_profile_post(int $profile_post_id) {
+    /**
+	 * Fetch a profile post on your own profile.
+	 *
+     * @param int The identifier of the profile post.
+	 * @return APIResponse The parsed API response.
+	 */
+    function fetchProfilePost(int $profile_post_id): APIResponse {
         return $this->wrapper->get("members/self/profile-posts/" . $profile_post_id);
     }
 
-    public function modify_profile_post(int $profile_post_id, string $message) {
+    /**
+	 * Modify a profile post on your own profile.
+	 *
+     * @param int The identifier of the profile post.
+     * @param string The new text content of the profile post.
+     * 
+	 * @return APIResponse The parsed API response.
+	 */
+    function modifyProfilePost(int $profile_post_id, string $message): APIResponse {
         return $this->wrapper->patch("members/self/profile-posts/" . $profile_post_id, ["message" => $message]);
     }
 
-    public function delete_profile_post(int $profile_post_id) {
+    /**
+	 * Delete a profile post on your own profile.
+	 *
+     * @param int The identifier of the profile post.
+	 * @return APIResponse The parsed API response.
+	 */
+    function deleteProfilePost(int $profile_post_id): APIResponse {
         return $this->wrapper->delete("members/self/profile-posts/" . $profile_post_id);
     }
 }

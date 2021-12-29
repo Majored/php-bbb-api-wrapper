@@ -90,11 +90,20 @@ class ResourcesHelper {
     }
 
     /** 
-     * Construct and return a updates helper instance.
+     * Construct and return an updates helper instance.
 	 *
      * @return UpdatesHelper The constructed updates helper.
 	 */
     function updates(): UpdatesHelper {
         return new UpdatesHelper($this->wrapper);
+    }
+
+    /** 
+     * Construct and return a reviews helper instance.
+	 *
+     * @return ReviewsHelper The constructed reviews helper.
+	 */
+    function reviews(): ReviewsHelper {
+        return new ReviewsHelper($this->wrapper);
     }
 }

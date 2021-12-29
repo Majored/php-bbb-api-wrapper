@@ -13,6 +13,7 @@ require __DIR__ . "/helpers/ThreadsHelper.php";
 require __DIR__ . "/helpers/Resources/ResourcesHelper.php";
 require __DIR__ . "/helpers/Resources/LicensesHelper.php";
 require __DIR__ . "/helpers/Resources/PurchasesHelper.php";
+require __DIR__ . "/helpers/Resources/DownloadsHelper.php";
 
 /** The primary class for interactions with MC-Market's API. */
 class APIWrapper {

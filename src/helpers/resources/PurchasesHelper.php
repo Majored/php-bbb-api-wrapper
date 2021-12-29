@@ -8,7 +8,7 @@ class PurchasesHelper {
     private $wrapper;
 
     /**
-	 * Construct a new licenses helper from a wrapper instance.
+	 * Construct a new purchases helper from a wrapper instance.
 	 *
 	 * @param APIWrapper The current wrapper instance in use.
 	 */

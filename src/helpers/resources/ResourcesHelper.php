@@ -70,4 +70,13 @@ class ResourcesHelper {
     function purchases(): PurchasesHelper {
         return new PurchasesHelper($this->wrapper);
     }
+
+    /** 
+     * Construct and return a downloads helper instance.
+	 *
+     * @return DownloadsHelper The constructed downloads helper.
+	 */
+    function downloads(): DownloadsHelper {
+        return new DownloadsHelper($this->wrapper);
+    }
 }

@@ -21,7 +21,7 @@ class APIResponse {
      * @param mixed The data if present.
      * @param mixed The error if present.
 	 */
-    function __construct(string $result, mixed $data, mixed $error) {
+    function __construct(string $result, $data, $error) {
         $this->result = $result;
         $this->data = $data;
         $this->error = $error;
@@ -41,7 +41,7 @@ class APIResponse {
      * 
      * @return mixed The response data, or null if it was errored.
 	 */
-    function getData(): mixed {
+    function getData() {
         return $this->data;
     }
     
@@ -59,7 +59,7 @@ class APIResponse {
      * 
      * @return mixed The response error, or null if it was successful.
 	 */
-    function getError(): mixed {
+    function getError() {
         return $this->error;
     }
 

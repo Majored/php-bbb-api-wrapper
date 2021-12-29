@@ -46,7 +46,7 @@ class ConversationsHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function listReplies(int $conversation_id): APIResponse {
-        return $this->wrapper->get("conversations/" . $conversation_id . "/replies");
+        return $this->wrapper->get(sprintf("conversations/%d/replies", $conversation_id));
     }
 
     /**
@@ -58,6 +58,6 @@ class ConversationsHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function reply(int $conversation_id, string $message): APIResponse {
-        return $this->wrapper->post("conversations/" . $conversation_id . "/replies", ["message" => $message]);
+        return $this->wrapper->post(sprintf("conversations/%d/replies", $conversation_id), ["message" => $message]);
     }
 }

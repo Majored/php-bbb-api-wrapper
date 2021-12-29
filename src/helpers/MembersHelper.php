@@ -23,7 +23,7 @@ class MembersHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function fetch(int $member_id): APIResponse {
-        return $this->wrapper->get("members/" . $member_id);
+        return $this->wrapper->get(sprintf("members/%d", $member_id));
     }
 
     /**
@@ -33,7 +33,7 @@ class MembersHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function fetchByName(string $username): APIResponse {
-        return $this->wrapper->get("members/username/" . $username);
+        return $this->wrapper->get(sprintf("members/username/%s", $username));
     }
 
     /**
@@ -84,7 +84,7 @@ class MembersHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function fetchProfilePost(int $profile_post_id): APIResponse {
-        return $this->wrapper->get("members/self/profile-posts/" . $profile_post_id);
+        return $this->wrapper->get(sprintf("members/self/profile-posts/%d", $profile_post_id));
     }
 
     /**
@@ -96,7 +96,8 @@ class MembersHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function modifyProfilePost(int $profile_post_id, string $message): APIResponse {
-        return $this->wrapper->patch("members/self/profile-posts/" . $profile_post_id, ["message" => $message]);
+        $body =  ["message" => $message];
+        return $this->wrapper->patch(sprintf("members/self/profile-posts/%d", $profile_post_id), $body);
     }
 
     /**
@@ -106,6 +107,6 @@ class MembersHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function deleteProfilePost(int $profile_post_id): APIResponse {
-        return $this->wrapper->delete("members/self/profile-posts/" . $profile_post_id);
+        return $this->wrapper->delete(sprintf("members/self/profile-posts/%d", $profile_post_id));
     }
 }

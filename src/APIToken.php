@@ -28,7 +28,7 @@ class APIToken {
      * @return string The complete header line.
 	 */
     function asHeader(): string {
-        return "Authorization: " . $this->type . " " . $this->value;
+        return sprintf("Authorization: %s %s", $this->type, $this->value);
     }
 }
 

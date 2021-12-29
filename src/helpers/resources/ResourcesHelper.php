@@ -50,6 +50,6 @@ class ResourcesHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function fetch(int $resource_id): APIResponse {
-        return $this->wrapper->get("resources/" . $resource_id);
+        return $this->wrapper->get(sprintf("resources/%d", $resource_id));
     }
 }

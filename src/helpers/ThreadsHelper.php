@@ -32,7 +32,7 @@ class ThreadsHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function fetch(int $thread_id): APIResponse {
-        return $this->wrapper->get("threads/" . $thread_id);
+        return $this->wrapper->get(sprintf("threads/%d"), $thread_id);
     }
 
     /**
@@ -42,7 +42,7 @@ class ThreadsHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function listReplies(int $thread_id): APIResponse {
-        return $this->wrapper->get("threads/" . $thread_id . "/replies");
+        return $this->wrapper->get(sprintf("threads/%d/replies", $thread_id));
     }
 
     /**
@@ -54,6 +54,6 @@ class ThreadsHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function reply(int $thread_id, string $message): APIResponse {
-        return $this->wrapper->post("threads/" . $thread_id . "/replies", ["message" => $message]);
+        return $this->wrapper->post(sprintf("threads/%d/replies", $thread_id), ["message" => $message]);
     }
 }

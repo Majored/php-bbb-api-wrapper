@@ -65,7 +65,7 @@ class APIWrapper {
         $this->stallUntilCanMakeRequest(RequestType::READ);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
-        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
+        curl_setopt($this->http, CURLOPT_URL, sprintf("%s/%s", APIWrapper::BASE_URL, $endpoint));
         curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->asHeader()));
 
         if ($body = $this->handleResponse(RequestType::READ)) {
@@ -87,7 +87,7 @@ class APIWrapper {
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "PATCH");
-        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
+        curl_setopt($this->http, CURLOPT_URL, sprintf("%s/%s", APIWrapper::BASE_URL, $endpoint));
         curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->asHeader(), APIWrapper::CONTENT_TYPE_HEADER]);
         curl_setopt($this->http, CURLOPT_POSTFIELDS, json_encode($body));
 
@@ -110,7 +110,7 @@ class APIWrapper {
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
+        curl_setopt($this->http, CURLOPT_URL, sprintf("%s/%s", APIWrapper::BASE_URL, $endpoint));
         curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->asHeader(), APIWrapper::CONTENT_TYPE_HEADER]);
         curl_setopt($this->http, CURLOPT_POSTFIELDS, json_encode($body));
 
@@ -132,7 +132,7 @@ class APIWrapper {
         
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "DELETE");
-        curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
+        curl_setopt($this->http, CURLOPT_URL, sprintf("%s/%s", APIWrapper::BASE_URL, $endpoint));
         curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->asHeader()));
 
         if ($body = $this->handleResponse(RequestType::WRITE)) {

@@ -19,28 +19,31 @@ class ResourcesHelper {
     /**
 	 * List a single page of resources.
 	 *
+     * @param array An optional associated array of sort options.
 	 * @return APIResponse The parsed API response.
 	 */
-    function list(): APIResponse {
-        return $this->wrapper->get("resources");
+    function list(array $sort = []): APIResponse {
+        return $this->wrapper->get("resources", $sort);
     }
 
     /**
 	 * List a single page of resources you own.
 	 *
+     * @param array An optional associated array of sort options.
 	 * @return APIResponse The parsed API response.
 	 */
-    function listOwned(): APIResponse {
-        return $this->wrapper->get("resources/owned");
+    function listOwned(array $sort = []): APIResponse {
+        return $this->wrapper->get("resources/owned", $sort);
     }
 
     /**
 	 * List a single page of resources you collaborate on.
 	 *
+     * @param array An optional associated array of sort options.
 	 * @return APIResponse The parsed API response.
 	 */
-    function listCollaborated(): APIResponse {
-        return $this->wrapper->get("resources/collaborated");
+    function listCollaborated(array $sort = []): APIResponse {
+        return $this->wrapper->get("resources/collaborated", $sort);
     }
 
     /**

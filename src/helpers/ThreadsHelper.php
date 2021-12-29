@@ -19,10 +19,11 @@ class ThreadsHelper {
     /**
 	 * List a single page of threads you own or collaborate on.
 	 *
+     * @param array An optional associated array of sort options.
 	 * @return APIResponse The parsed API response.
 	 */
-    function list(): APIResponse {
-        return $this->wrapper->get("threads");
+    function list(array $sort = []): APIResponse {
+        return $this->wrapper->get("threads", $sort);
     }
 
     /**
@@ -32,17 +33,19 @@ class ThreadsHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function fetch(int $thread_id): APIResponse {
-        return $this->wrapper->get(sprintf("threads/%d"), $thread_id);
+        return $this->wrapper->get(sprintf("threads/%d", $thread_id));
     }
 
     /**
 	 * List a single page of replies to a thread you own or collaborate on.
      * 
 	 * @param int The identifier of the thread.
+     * @param array An optional associated array of sort options.
+     * 
 	 * @return APIResponse The parsed API response.
 	 */
-    function listReplies(int $thread_id): APIResponse {
-        return $this->wrapper->get(sprintf("threads/%d/replies", $thread_id));
+    function listReplies(int $thread_id, array $sort = []): APIResponse {
+        return $this->wrapper->get(sprintf("threads/%d/replies", $thread_id), $sort);
     }
 
     /**

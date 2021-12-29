@@ -71,10 +71,11 @@ class MembersHelper {
     /**
 	 * List a single page of profile posts on your own profile.
 	 *
+     * @param array An optional associated array of sort options.
 	 * @return APIResponse The parsed API response.
 	 */
-    function listProfilePosts(): APIResponse {
-        return $this->wrapper->get("members/self/profile-posts");
+    function listProfilePosts(array $sort = []): APIResponse {
+        return $this->wrapper->get("members/self/profile-posts", $sort);
     }
 
     /**

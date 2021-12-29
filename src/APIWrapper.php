@@ -66,19 +66,22 @@ class APIWrapper {
 	 * Schedules a GET request to a specific endpoint and stalls if we've previously hit a rate limit.
 	 *
 	 * @param string The path of the endpoint.
+     * @param array An optional associated array of sort options.
 	 * @return APIResponse The parsed response.
 	 */
-    function get(string $endpoint): APIResponse {
+    function get(string $endpoint, array $sort = []): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::READ);
 
+        $url = sprintf("%s/%s?%s", APIWrapper::BASE_URL, $endpoint, http_build_query($sort));
+
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
-        curl_setopt($this->http, CURLOPT_URL, sprintf("%s/%s", APIWrapper::BASE_URL, $endpoint));
+        curl_setopt($this->http, CURLOPT_URL, $url);
         curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->asHeader()));
 
         if ($body = $this->handleResponse(RequestType::READ)) {
             return APIResponse::from_json($body);
         } else {
-            return $this->get($endpoint);
+            return $this->get($endpoint, $sort);
         }
     }
 

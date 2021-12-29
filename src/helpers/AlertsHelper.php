@@ -19,10 +19,11 @@ class AlertsHelper {
     /**
 	 * List a single page of unread alerts.
 	 *
+     * @param array An optional associated array of sort options.
 	 * @return APIResponse The parsed API response.
 	 */
-    function listUnread(): APIResponse {
-        return $this->wrapper->get("alerts");
+    function listUnread(array $sort = []): APIResponse {
+        return $this->wrapper->get("alerts", $sort);
     }
 
     /**

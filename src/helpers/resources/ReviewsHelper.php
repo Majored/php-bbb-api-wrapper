@@ -20,10 +20,12 @@ class ReviewsHelper {
 	 * List a single page of resource reviews.
 	 *
      * @param int The identifier of the resource.
+     * @param array An optional associated array of sort options.
+     * 
 	 * @return APIResponse The parsed API response.
 	 */
-    function list(int $resource_id): APIResponse {
-        return $this->wrapper->get(sprintf("resources/%d/reviews", $resource_id));
+    function list(int $resource_id, array $sort = []): APIResponse {
+        return $this->wrapper->get(sprintf("resources/%d/reviews", $resource_id), $sort);
     }
 
     /**

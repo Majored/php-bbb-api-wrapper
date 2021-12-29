@@ -19,10 +19,11 @@ class ConversationsHelper {
     /**
 	 * List a single page of unread conversations.
 	 *
+     * @param array An optional associated array of sort options.
 	 * @return APIResponse The parsed API response.
 	 */
-    function listUnread(): APIResponse {
-        return $this->wrapper->get("conversations");
+    function listUnread(array $sort = []): APIResponse {
+        return $this->wrapper->get("conversations", $sort);
     }
 
     /**
@@ -43,10 +44,12 @@ class ConversationsHelper {
 	 * List a single page of replies to an unread conversation.
 	 *
      * @param int The identifier of the unread conversation.
+     * @param array An optional associated array of sort options.
+     * 
 	 * @return APIResponse The parsed API response.
 	 */
-    function listReplies(int $conversation_id): APIResponse {
-        return $this->wrapper->get(sprintf("conversations/%d/replies", $conversation_id));
+    function listReplies(int $conversation_id, array $sort = []): APIResponse {
+        return $this->wrapper->get(sprintf("conversations/%d/replies", $conversation_id), $sort);
     }
 
     /**

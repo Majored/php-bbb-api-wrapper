@@ -20,10 +20,12 @@ class DownloadsHelper {
 	 * List a single page of resource downloads.
 	 *
      * @param int The identifier of the resource.
+     * @param array An optional associated array of sort options.
+     * 
 	 * @return APIResponse The parsed API response.
 	 */
-    function list(int $resource_id): APIResponse {
-        return $this->wrapper->get(sprintf("resources/%d/downloads", $resource_id));
+    function list(int $resource_id, array $sort = []): APIResponse {
+        return $this->wrapper->get(sprintf("resources/%d/downloads", $resource_id), $sort);
     }
 
     /**
@@ -31,11 +33,12 @@ class DownloadsHelper {
 	 *
      * @param int The identifier of the resource.
      * @param int The identifier of the member.
+     * @param array An optional associated array of sort options.
      * 
 	 * @return APIResponse The parsed API response.
 	 */
-    function listByMember(int $resource_id, int $member_id): APIResponse {
-        return $this->wrapper->get(sprintf("resources/%d/downloads/members/%d", $resource_id, $member_id));
+    function listByMember(int $resource_id, int $member_id, array $sort = []): APIResponse {
+        return $this->wrapper->get(sprintf("resources/%d/downloads/members/%d", $resource_id, $member_id), $sort);
     }
 
     /**
@@ -43,10 +46,11 @@ class DownloadsHelper {
 	 *
      * @param int The identifier of the resource.
      * @param int The identifier of the version.
+     * @param array An optional associated array of sort options.
      * 
 	 * @return APIResponse The parsed API response.
 	 */
-    function listByVersion(int $resource_id, int $version_id): APIResponse {
-        return $this->wrapper->get(sprintf("resources/%d/downloads/versions/%d", $resource_id, $version_id));
+    function listByVersion(int $resource_id, int $version_id, array $sort = []): APIResponse {
+        return $this->wrapper->get(sprintf("resources/%d/downloads/versions/%d", $resource_id, $version_id), $sort);
     }
 }

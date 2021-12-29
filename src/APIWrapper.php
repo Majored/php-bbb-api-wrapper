@@ -61,7 +61,7 @@ class APIWrapper {
 	 * @param string The path of the endpoint.
 	 * @return APIResponse The parsed response.
 	 */
-    private function get(string $endpoint): APIResponse {
+    function get(string $endpoint): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::READ);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
@@ -82,13 +82,13 @@ class APIWrapper {
      * @param mixed The body of the request which will be serialised into JSON.
 	 * @return APIResponse The parsed response.
 	 */
-    private function patch(string $endpoint, mixed $body): APIResponse {
+    function patch(string $endpoint, mixed $body): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::WRITE);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "PATCH");
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
-        curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->as_header(), APIWrapper::CONTENT_TYPE_HEADER]);
+        curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->asHeader(), APIWrapper::CONTENT_TYPE_HEADER]);
         curl_setopt($this->http, CURLOPT_POSTFIELDS, json_encode($body));
 
         if ($body = $this->handleResponse(RequestType::WRITE)) {
@@ -105,13 +105,13 @@ class APIWrapper {
      * @param mixed The body of the request which will be serialised into JSON.
 	 * @return APIResponse The parsed response.
 	 */
-    private function post(string $endpoint, mixed $body): APIResponse {
+    function post(string $endpoint, mixed $body): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::WRITE);
 
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
-        curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->as_header(), APIWrapper::CONTENT_TYPE_HEADER]);
+        curl_setopt($this->http, CURLOPT_HTTPHEADER, [$this->token->asHeader(), APIWrapper::CONTENT_TYPE_HEADER]);
         curl_setopt($this->http, CURLOPT_POSTFIELDS, json_encode($body));
 
         if ($body = $this->handleResponse(RequestType::WRITE)) {
@@ -127,13 +127,13 @@ class APIWrapper {
 	 * @param string The path of the endpoint.
 	 * @return APIResponse The parsed response.
 	 */
-    private function delete(string $endpoint): APIResponse {
+    function delete(string $endpoint): APIResponse {
         $this->stallUntilCanMakeRequest(RequestType::WRITE);
         
         curl_setopt($this->http, CURLOPT_HTTPGET, true);
         curl_setopt($this->http, CURLOPT_CUSTOMREQUEST, "DELETE");
         curl_setopt($this->http, CURLOPT_URL, APIWrapper::BASE_URL . "/" . $endpoint);
-        curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->as_header()));
+        curl_setopt($this->http, CURLOPT_HTTPHEADER, array($this->token->asHeader()));
 
         if ($body = $this->handleResponse(RequestType::WRITE)) {
             return APIResponse::from_json($body);

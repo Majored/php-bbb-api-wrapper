@@ -52,4 +52,13 @@ class ResourcesHelper {
     function fetch(int $resource_id): APIResponse {
         return $this->wrapper->get(sprintf("resources/%d", $resource_id));
     }
+
+    /** 
+     * Construct and return a licenses helper instance.
+	 *
+     * @return LicensesHelper The constructed licenses helper.
+	 */
+    function licenses(): LicensesHelper {
+        return new LicensesHelper($this->wrapper);
+    }
 }

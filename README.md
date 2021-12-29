@@ -4,11 +4,11 @@
 A PHP wrapper for MC-Market's [HTTP API](https://www.mc-market.org/wiki/ultimate-api/).
 
 - Full coverage of the API.
-- Requests are queued and may be dynamically delayed to stay within rate limiting rules.
+- Type hinting used for IDE autocomplete & readability.
+- Requests are dynamically stalled to stay within rate limiting rules.
+- No dependencies other than cURL - clone this repository and go!
 
-## Installation & Usage
-
-// TODO
+## Usage
 
 An extensive list of [examples](https://github.com/Majored/php-mcm-api-wrapper/tree/main/examples) can be found under the `/examples` directory.
 

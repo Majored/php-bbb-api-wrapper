@@ -33,7 +33,7 @@ class MembersHelper {
 	 * @return APIResponse The parsed API response.
 	 */
     function fetchByName(string $username): APIResponse {
-        return $this->wrapper->get(sprintf("members/username/%s", $username));
+        return $this->wrapper->get(sprintf("members/usernames/%s", $username));
     }
 
     /**

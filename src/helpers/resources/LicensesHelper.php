@@ -54,21 +54,18 @@ class LicensesHelper {
     }
 
     /**
-	 * Issue a new resource license.
+	 * Issue a new permanent resource license.
 	 *
      * @param int The identifier of the resource.
      * @param int The identifier of the member.
-     * @param int The start date of the license as a UNIX timestamp.
-     * @param int The end date of the license as a UNIX timestamp.
      * @param bool Whether or not the license should be active.
      * 
 	 * @return APIResponse The parsed API response.
 	 */
-    function issue(int $resource_id, int $member_id, int $start_date, int $end_date, bool $active): APIResponse {
+    function issuePermanent(int $resource_id, int $member_id, bool $active): APIResponse {
         $body = [
             "purchaser_id" => $member_id,
-            "start_date" => $start_date,
-            "end_date" => $end_date,
+            "permanent" => true,
             "active" => $active
         ];
 
@@ -76,21 +73,59 @@ class LicensesHelper {
     }
 
     /**
-	 * Modify an existing resource license.
+	 * Issue a new temporary resource license.
+	 *
+     * @param int The identifier of the resource.
+     * @param int The identifier of the member.
+     * @param int The start date of the license as a UNIX timestamp.
+     * @param int The end date of the license as a UNIX timestamp.
+     * 
+	 * @return APIResponse The parsed API response.
+	 */
+    function issueTemporary(int $resource_id, int $member_id, int $start_date, int $end_date): APIResponse {
+        $body = [
+            "purchaser_id" => $member_id,
+            "permanent" => false,
+            "start_date" => $start_date,
+            "end_date" => $end_date
+        ];
+
+        return $this->wrapper->post(sprintf("resources/%d/licenses", $resource_id), $body);
+    }
+
+    /**
+	 * Modify a permanent license (and convert to permanent if currently temporary).
+	 *
+     * @param int The identifier of the resource.
+     * @param int The identifier of the license.
+     * @param bool Whether or not the license should be active, or null if unchanged.
+     * 
+	 * @return APIResponse The parsed API response.
+	 */
+    function modifyPermanent(int $resource_id, int $license_id, bool $active): APIResponse {
+        $body = [
+            "permanent" => false,
+            "active" => $active
+        ];
+
+        return $this->wrapper->patch(sprintf("resources/%d/licenses/%d", $resource_id, $license_id), $body);
+    }
+
+    /**
+	 * Modify a temporary license (and convert to temporary if currently permanent).
 	 *
      * @param int The identifier of the resource.
      * @param int The identifier of the license.
      * @param int The start date of the license as a UNIX timestamp, or null if unchanged.
      * @param int The end date of the license as a UNIX timestamp, or null if unchanged.
-     * @param bool Whether or not the license should be active, or null if unchanged.
      * 
 	 * @return APIResponse The parsed API response.
 	 */
-    function modify(int $resource_id, int $license_id, int $start_date, int $end_date, bool $active): APIResponse {
+    function modifyTemporary(int $resource_id, int $license_id, int $start_date, int $end_date): APIResponse {
         $body = [
+            "permanent" => false,
             "start_date" => $start_date,
             "end_date" => $end_date,
-            "active" => $active
         ];
 
         return $this->wrapper->patch(sprintf("resources/%d/licenses/%d", $resource_id, $license_id), $body);

@@ -1,0 +1,2 @@
+# Don't include vendor files installed via Composer
+/src-composer/vendor/

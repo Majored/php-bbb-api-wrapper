@@ -44,24 +44,25 @@ class APIWrapper {
 
 
     /**
-	 * Initialises this wrapper with a provided API token.
-     * 
-     * During the initialisation process, we make a request to the `health` endpoint which we expect to always succeed
-     * under nominal conditions. If the request does fail, we expect subsequent requests to other endpoints to also
-     * fail so we conclude that an initialisation failure has occured.
+	 * Initialises this wrapper with a provided API token, and runs a health check if requested.
 	 *
 	 * @param APIToken The pre-constructed API token.
+     * @param bool Whether or not to run a health check.
 	 * @return APIResponse The parsed response of the request to `health`.
 	 */
-    function initialise(APIToken $token): APIResponse {
+    function initialise(APIToken $token, bool $health): APIResponse {
         $this->token = $token;
         $this->http = curl_init();
         $this->throttler = new Throttler();
         
         curl_setopt($this->http, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->http, CURLOPT_HEADER, 1);
-        
-        return $this->health();
+
+        if ($health) {
+            return $this->health();
+        } else {
+            return ["result" => "success"];
+        }
     }
 
     /**

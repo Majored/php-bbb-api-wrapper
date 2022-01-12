@@ -7,7 +7,7 @@ require __DIR__ . "/../src/APIWrapper.php";
 $token = new APIToken(TokenType::PRIVATE, "...");
 $wrapper = new APIWrapper();
 
-if ($error = $wrapper->initialise($token)->getError()) {
+if ($error = $wrapper->initialise($token, true)->getError()) {
     die("API initialisation error: ". $error["message"]);
 }
 

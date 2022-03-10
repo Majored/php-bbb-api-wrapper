@@ -37,6 +37,16 @@ class MembersHelper {
     }
 
     /**
+	 * Fetch a member by their Discord identifier.
+	 *
+     * @param string The identifier of the Discord account.
+	 * @return APIResponse The parsed API response.
+	 */
+    function fetchByDiscord(int $discordId): APIResponse {
+        return $this->wrapper->get(sprintf("members/discords/%d", $discordId));
+    }
+
+    /**
 	 * Fetch information about yourself.
 	 *
 	 * @return APIResponse The parsed API response.

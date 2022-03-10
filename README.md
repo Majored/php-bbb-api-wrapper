@@ -16,7 +16,7 @@ An extensive list of [examples](https://github.com/Majored/php-mcm-api-wrapper/t
 <?php
 require __DIR__ . "/../src/APIWrapper.php";
 
-$token = new APIToken(TokenType::PRIVATE, "xXoIjvQ6G8UmUPufZWxN-Kkyd54Js_bY");
+$token = new APIToken(TokenType::PRIVATE, "Find @ https://www.mc-market.org/account/api");
 $wrapper = new APIWrapper();
 
 if ($error = $wrapper->initialise($token)->getError()) {

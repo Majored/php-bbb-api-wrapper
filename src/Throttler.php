@@ -4,28 +4,56 @@
 
 /** Stores metadata needed for local request throttling. */
 class Throttler {
+    /** @var string The name of the file to save cached throttler data to. */
+    const CACHE_FILE = "throttler.json";
+
+
     /** @var int The millisecond timestamp of the last read request. */
-    private $read_last_request;
+    private $readLastRequest;
 
     /** @var int The amount of milliseconds to stall for before making another read request. */
-    private $read_last_retry;
+    private $readLastRetry;
 
     /** @var int The millisecond timestamp of the last write request. */
-    private $write_last_request;
+    private $writeLastRequest;
 
     /** @var int The amount of milliseconds to stall for before making another write request. */
-    private $write_last_retry;
+    private $writeLastRetry;
 
-
+    
     /**
 	 * Constructs a new instance by setting default values for all properties.
 	 */
     function __construct() {
-        $this->read_last_request = microtime(true) * 1000;
-        $this->read_last_retry = 0;
+        if (!file_exists(Throttler::CACHE_FILE)) {
+            $this->readLastRequest = microtime(true) * 1000;
+            $this->readLastRetry = 0;
+    
+            $this->writeLastRequest = microtime(true) * 1000;
+            $this->writeLastRetry = 0;
+        } else {
+            $throttleData = json_decode(file_get_contents(Throttler::CACHE_FILE), true);
 
-        $this->write_last_request = microtime(true) * 1000;
-        $this->write_last_retry = 0;
+            $this->readLastRequest = $throttleData["readLastRequest"];
+            $this->readLastRetry = $throttleData["readLastRetry"];
+    
+            $this->writeLastRequest = $throttleData["writeLastRequest"];
+            $this->writeLastRetry = $throttleData["writeLastRetry"];
+        }
+    }
+
+    /**
+	 * Saves currently stored throttle data to the filesystem.
+	 */
+    function __destruct() {
+        $values = array(
+            "readLastRequest" => $this->readLastRequest,
+            "readLastRetry" => $this->readLastRetry,
+            "writeLastRequest" => $this->writeLastRequest,
+            "writeLastRetry" => $this->writeLastRetry
+        );
+
+        file_put_contents(Throttler::CACHE_FILE, json_encode($values));
     }
 
     /**
@@ -34,16 +62,16 @@ class Throttler {
 	 * @param int The amount of milliseconds to wait.
 	 */
     function setRead(int $retry) {
-        $this->read_last_retry = $retry;
-        $this->read_last_request = microtime(true) * 1000;
+        $this->readLastRetry = $retry;
+        $this->readLastRequest = microtime(true) * 1000;
     }
 
     /**
 	 * Resets the read retry amount to zero and updates the read request time.
 	 */
     function resetRead() {
-        $this->read_last_retry = 0;
-        $this->read_last_request = microtime(true) * 1000;
+        $this->readLastRetry = 0;
+        $this->readLastRequest = microtime(true) * 1000;
     }
 
     /**
@@ -52,16 +80,16 @@ class Throttler {
 	 * @param int The amount of milliseconds to wait.
 	 */
     function setWrite(int $retry) {
-        $this->write_last_retry = $retry;
-        $this->write_last_request = microtime(true) * 1000;
+        $this->writeLastRetry = $retry;
+        $this->writeLastRequest = microtime(true) * 1000;
     }
 
     /**
 	 * Resets the write retry amount to zero and updates the write request time.
 	 */
     function resetWrite() {
-        $this->write_last_retry = 0;
-        $this->write_last_request = microtime(true) * 1000;
+        $this->writeLastRetry = 0;
+        $this->writeLastRequest = microtime(true) * 1000;
     }
 
     /**
@@ -75,14 +103,14 @@ class Throttler {
         $stall_for = 0;
 
         if ($type == RequestType::READ) {
-            if ($this->read_last_retry > 0 && ($time - $this->read_last_request) < $this->read_last_retry) {
-                $stall_for = $this->read_last_retry - ($time - $this->read_last_request);
+            if ($this->readLastRetry > 0 && ($time - $this->readLastRequest) < $this->readLastRetry) {
+                $stall_for = $this->readLastRetry - ($time - $this->readLastRequest);
             }
         }
 
         if ($type == RequestType::WRITE) {
-            if ($this->write_last_retry > 0 && ($time - $this->write_last_request) < $this->write_last_retry) {
-                $stall_for = $this->write_last_retry - ($time - $this->write_last_request);
+            if ($this->writeLastRetry > 0 && ($time - $this->writeLastRequest) < $this->writeLastRetry) {
+                $stall_for = $this->writeLastRetry - ($time - $this->writeLastRequest);
             }
         }
 

@@ -1,8 +1,8 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
-// MIT License (https://github.com/Majored/php-mcm-api-wrapper/blob/main/LICENSE)
+// MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
 
-/** Represents a parsed response from MC-Market's API. */
+/** Represents a parsed response from BuiltByBit's API. */
 class APIResponse {
     /** @var string A string representing whether this response was successful or not. */
     private $result;

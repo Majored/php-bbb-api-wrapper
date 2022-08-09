@@ -1,6 +1,6 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
-// MIT License (https://github.com/Majored/php-mcm-api-wrapper/blob/main/LICENSE)
+// MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
 
 require __DIR__ . "/APIToken.php";
 require __DIR__ . "/APIResponse.php";
@@ -19,10 +19,10 @@ require __DIR__ . "/helpers/Resources/VersionsHelper.php";
 require __DIR__ . "/helpers/Resources/UpdatesHelper.php";
 require __DIR__ . "/helpers/Resources/ReviewsHelper.php";
 
-/** The primary class for interactions with MC-Market's API. */
+/** The primary class for interactions with BuiltByBit's API. */
 class APIWrapper {
-    /** @var string The base URL of MC-Market's API that we prepend to endpoints. */
-    const BASE_URL = "https://api.mc-market.org/v1";
+    /** @var string The base URL of BuiltByBit's API that we prepend to endpoints. */
+    const BASE_URL = "https://api.builtbybit.com/v1";
 
     /** @var string The complete header line for request bodies (JSON).  */
     const CONTENT_TYPE_HEADER = "Content-Type: application/json";

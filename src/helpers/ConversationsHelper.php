@@ -1,6 +1,6 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
-// MIT License (https://github.com/Majored/php-mcm-api-wrapper/blob/main/LICENSE)
+// MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
 
 /** A helper class for conversation-related API endpoints. */
 class ConversationsHelper {

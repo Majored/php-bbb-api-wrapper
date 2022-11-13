@@ -11,13 +11,13 @@ require __DIR__ . "/helpers/ConversationsHelper.php";
 require __DIR__ . "/helpers/MembersHelper.php";
 require __DIR__ . "/helpers/ThreadsHelper.php";
 
-require __DIR__ . "/helpers/Resources/ResourcesHelper.php";
-require __DIR__ . "/helpers/Resources/LicensesHelper.php";
-require __DIR__ . "/helpers/Resources/PurchasesHelper.php";
-require __DIR__ . "/helpers/Resources/DownloadsHelper.php";
-require __DIR__ . "/helpers/Resources/VersionsHelper.php";
-require __DIR__ . "/helpers/Resources/UpdatesHelper.php";
-require __DIR__ . "/helpers/Resources/ReviewsHelper.php";
+require __DIR__ . "/helpers/resources/ResourcesHelper.php";
+require __DIR__ . "/helpers/resources/LicensesHelper.php";
+require __DIR__ . "/helpers/resources/PurchasesHelper.php";
+require __DIR__ . "/helpers/resources/DownloadsHelper.php";
+require __DIR__ . "/helpers/resources/VersionsHelper.php";
+require __DIR__ . "/helpers/resources/UpdatesHelper.php";
+require __DIR__ . "/helpers/resources/ReviewsHelper.php";
 
 /** The primary class for interactions with BuiltByBit's API. */
 class APIWrapper {
@@ -48,7 +48,7 @@ class APIWrapper {
      * @param bool Whether or not to run a health check.
 	 * @return APIResponse The parsed response of the request to `health`.
 	 */
-    function initialise(APIToken $token, bool $health): APIResponse {
+    function initialise(APIToken $token, bool $health = true): APIResponse {
         $this->token = $token;
         $this->http = curl_init();
         $this->throttler = new Throttler();

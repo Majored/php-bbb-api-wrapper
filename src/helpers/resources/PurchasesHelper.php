@@ -1,6 +1,10 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
 // MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
+namespace Majored\PhpBbbApiWrapper\Helpers\Resources;
+
+use Majored\PhpBbbApiWrapper\APIResponse;
+use Majored\PhpBbbApiWrapper\APIWrapper;
 
 /** A helper class for purchase-related API endpoints. */
 class PurchasesHelper {

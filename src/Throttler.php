@@ -1,6 +1,7 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
 // MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
+namespace Majored\PhpBbbApiWrapper;
 
 /** Stores metadata needed for local request throttling. */
 class Throttler {
@@ -116,13 +117,4 @@ class Throttler {
 
         return $stall_for;
     }
-}
-
-/** Holds declarations for different request types. */
-class RequestType {
-    /** @var int An integer value representing the read endpoints (ie. GET). */
-    public const READ = 0;
-
-    /** @var int An integer value representing the write endpoints (ie. POST, PATCH, & DELETE). */
-    public const WRITE = 1;
 }

@@ -1,23 +1,14 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
 // MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
+namespace Majored\PhpBbbApiWrapper;
 
-require __DIR__ . "/APIToken.php";
-require __DIR__ . "/APIResponse.php";
-require __DIR__ . "/Throttler.php";
-
-require __DIR__ . "/helpers/AlertsHelper.php";
-require __DIR__ . "/helpers/ConversationsHelper.php";
-require __DIR__ . "/helpers/MembersHelper.php";
-require __DIR__ . "/helpers/ThreadsHelper.php";
-
-require __DIR__ . "/helpers/resources/ResourcesHelper.php";
-require __DIR__ . "/helpers/resources/LicensesHelper.php";
-require __DIR__ . "/helpers/resources/PurchasesHelper.php";
-require __DIR__ . "/helpers/resources/DownloadsHelper.php";
-require __DIR__ . "/helpers/resources/VersionsHelper.php";
-require __DIR__ . "/helpers/resources/UpdatesHelper.php";
-require __DIR__ . "/helpers/resources/ReviewsHelper.php";
+use CurlHandle;
+use Majored\PhpBbbApiWrapper\Helpers\AlertsHelper;
+use Majored\PhpBbbApiWrapper\Helpers\ConversationsHelper;
+use Majored\PhpBbbApiWrapper\Helpers\MembersHelper;
+use Majored\PhpBbbApiWrapper\Helpers\Resources\ResourcesHelper;
+use Majored\PhpBbbApiWrapper\Helpers\ThreadsHelper;
 
 /** The primary class for interactions with BuiltByBit's API. */
 class APIWrapper {
@@ -157,9 +148,9 @@ class APIWrapper {
      * Handles a CURL response and sets/resets local rate limiting metadata.
 	 *
      * @param int The type of request which the response originated from (RequestType).
-	 * @return string The raw JSON response or null if a rate limit was hit.
+	 * @return string|null The raw JSON response or null if a rate limit was hit.
 	 */
-    private function handleResponse(int $type): string {
+    private function handleResponse(int $type): ?string {
         list($header, $body) = explode("\r\n\r\n", curl_exec($this->http), 2);
         $status = curl_getinfo($this->http, CURLINFO_HTTP_CODE);
         $header = APIWrapper::parseHeaders(explode("\r\n", $header));

@@ -157,9 +157,9 @@ class APIWrapper {
      * Handles a CURL response and sets/resets local rate limiting metadata.
 	 *
      * @param int The type of request which the response originated from (RequestType).
-	 * @return string The raw JSON response or null if a rate limit was hit.
+	 * @return string|null The raw JSON response or null if a rate limit was hit.
 	 */
-    private function handleResponse(int $type): string {
+    private function handleResponse(int $type): ?string {
         list($header, $body) = explode("\r\n\r\n", curl_exec($this->http), 2);
         $status = curl_getinfo($this->http, CURLINFO_HTTP_CODE);
         $header = APIWrapper::parseHeaders(explode("\r\n", $header));

@@ -1,6 +1,7 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
 // MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
+namespace Majored\PhpBbbApiWrapper;
 
 /** Represents a parsed response from BuiltByBit's API. */
 class APIResponse {
@@ -69,7 +70,7 @@ class APIResponse {
      * @param string The raw JSON response.
      * @return APIResponse The newly construct response instance.
 	 */
-    static function from_json(string $json): Self {
+    static function from_json(string $json): self {
         $data = json_decode($json, true);
 
         if (!array_key_exists("data", $data)) {

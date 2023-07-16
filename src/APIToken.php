@@ -1,6 +1,7 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
 // MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
+namespace Majored\PhpBbbApiWrapper;
 
 /** Stores data about a particular API token. */
 class APIToken {
@@ -30,13 +31,4 @@ class APIToken {
     function asHeader(): string {
         return sprintf("Authorization: %s %s", $this->type, $this->value);
     }
-}
-
-/** Holds declarations for different API token types. */
-class TokenType {
-    /** @var string A string value representing the Private token type. */
-    public const PRIVATE = "Private";
-
-    /** @var string A string value representing the Shared token type. */
-    public const SHARED = "Shared";
 }

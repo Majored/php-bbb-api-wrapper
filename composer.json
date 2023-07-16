@@ -1,6 +1,11 @@
 {
     "name": "mcwnuq/php-bbb-api-wrapper",
     "description": "A PHP wrapper for BuiltByBit's Ultimate REST API.",
+    "autoload": {
+        "psr-4": {
+            "Majored\\PhpBbbApiWrapper\\": "src/"
+        }
+    },
     "authors": [
         {
             "name": "Majored"

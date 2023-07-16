@@ -1,6 +1,14 @@
 <?php
 // Copyright (c) 2021 Harry [Majored] [hello@majored.pw]
 // MIT License (https://github.com/Majored/php-bbb-api-wrapper/blob/main/LICENSE)
+namespace Majored\PhpBbbApiWrapper;
+
+use CurlHandle;
+use Majored\PhpBbbApiWrapper\Helpers\AlertsHelper;
+use Majored\PhpBbbApiWrapper\Helpers\ConversationsHelper;
+use Majored\PhpBbbApiWrapper\Helpers\MembersHelper;
+use Majored\PhpBbbApiWrapper\Helpers\Resources\ResourcesHelper;
+use Majored\PhpBbbApiWrapper\Helpers\ThreadsHelper;
 
 require __DIR__ . "/APIToken.php";
 require __DIR__ . "/APIResponse.php";
